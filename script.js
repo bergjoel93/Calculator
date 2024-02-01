@@ -77,28 +77,37 @@ equalsButton.addEventListener('click', ()=> {
 ////////// FUNCTIONS ///////////
 
 //Create a new function operate that takes an operator and 2 numbers and then calls one of the above functions on the numbers.
-function operate(firstNumber, operator, secondNumber){
-    switch(operator){
+function operate(num1, op, num2){
+    let solution = '';
+    switch(op){
         case "add":
-            updateDisplay(firstNumber + secondNumber);
+            solution = num1 + num2;
             break;
         case "subtract":
-            updateDisplay(firstNumber - secondNumber);
+            solution = num1 - num2;
             break;
-        case "mulitply":
-            updateDisplay(firstNumber * secondNumber);
+        case "multiply":
+            solution = num1 * num2;
             break;
         case "divide":
-            updateDisplay(firstNumber / secondNumber);
+            solution = num1 / num2;
             break;
         default:
-        updateDisplay(0);
+        updateDisplay(error);
     }
+    updateDisplay(solution);
+    operatorButtonClicked = false;
+    operator = '';
+    secondNumber = '';
+    firstNumber = solution;
+    console.log("First number updated: "+firstNumber);
 }
 
 //whatever you want to be displayed will be an argument of updateDisplay
 function updateDisplay(value) {
+    let num = parseFloat(value);
+    let roundedNum = parseFloat(num.toFixed(7));
     const display = document.querySelector('.display');
-    display.textContent = value;
+    display.textContent = roundedNum;
 }
 
