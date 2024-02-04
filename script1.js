@@ -109,3 +109,50 @@ function resetOperatorsClass(){
         active.classList.remove('active');
     });
 }
+
+/**
+ * Logic: 
+ * Num button logic:
+ * if user hits a number button check:
+ * if ((firstNumberActive )){
+ *  firstNumberActive = true;
+ *  firstNumber = value input; 
+ * } 
+ * else if(operatorButtonClicked == true && fisrtNumber == true && equalsButtonClicked == false){
+ *  firstNumberActive = false;
+ *  secondNumberActive = true;
+ *  secondNumber = value input;
+ * }
+ * else if(equalsButtonClicked == true && firstNumberActive == true){
+ *  equalsButtonClicked = false; 
+ *  firstNumber = value input; 
+ * }
+ * 
+ * 
+ * Operator button logic:
+ * if user hits operator button {
+ *  if(operatorButtonClicked == false){ // check if operator button has been clicked. 
+ *  operator = value input;
+ *  operatorButtonClicked = true;
+ *  }
+ * }
+ * 
+ * 
+ * equals button logic:
+ * if user hits equals button
+ * if(equalsButtonClicked == false && secondNumber != '' && operator != ''){
+ *  equalsButtonClicked = true;
+ *  solution = operate();
+ *  clear(); // resets everything
+ *  firstNumber = solution;
+ *  updateDisplay(firstNumber);
+ *  firstNumberActive = true;
+ * }
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */

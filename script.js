@@ -12,6 +12,7 @@ let firstNumberActive = true; // default state is true
 let secondNumberActive = false;
 let equalsButtonClicked = false;
 
+
 //////////////////Program Logic////////////////////////////
 
 // Initialize state and bind event listeners for firstNumber and secondNumber
@@ -117,6 +118,48 @@ equalsButton.addEventListener('click', ()=> {
         
 });
 
+let signButton = document.querySelector("#sign");
+signButton.addEventListener('click', ()=>{
+    if(firstNumberActive){
+        let changedSign = Number(firstNumber) * -1;
+        firstNumber = changedSign;
+        updateDisplay(firstNumber);
+    }
+    if(secondNumberActive){
+        let changedSign = Number(secondNumber) * -1;
+        secondNumber = changedSign;
+        updateDisplay(secondNumber);
+    }
+});
+
+let percentButton = document.querySelector("#percent");
+percentButton.addEventListener('click', ()=>{
+    if(firstNumberActive){
+        let percent = Number(firstNumber) / 100;
+        firstNumber = percent;
+        updateDisplay(firstNumber);
+    }
+    if(secondNumberActive){
+        let percent = Number(secondNumber) / 100;
+        secondNumber = percent;
+        updateDisplay(secondNumber);
+    }
+});
+
+let decimalButton = document.querySelector("#decimal");
+decimalButton.addEventListener('click', () =>{
+    console.log("decimal");
+    if(firstNumberActive){
+        firstNumber = firstNumber.includes('.') ? firstNumber : firstNumber+".";
+        updateDisplay(firstNumber);
+    }
+    if(secondNumberActive){
+        secondNumber = secondNumber.includes('.')? secondNumber : secondNumber + ".";
+        updateDisplay(secondNumber);
+
+    }
+});
+
 
 
 
@@ -138,10 +181,13 @@ function operate(num1, op, num2){
             solution = num1 * num2;
             break;
         case "divide":
-            solution = num1 / num2;
+            if(num2 == 0){
+                soluition = "ERROR";
+            }
+            else{solution = num1 / num2;}
             break;
         default:
-        updateDisplay(error);
+        updateDisplay('ERROR');
     }
     return solution;
     // updateDisplay(solution);
@@ -154,10 +200,11 @@ function operate(num1, op, num2){
 
 //whatever you want to be displayed will be an argument of updateDisplay
 function updateDisplay(value) {
-    let num = parseFloat(value);
-    let roundedNum = parseFloat(num.toFixed(7));
-    const display = document.querySelector('.display');
-    display.textContent = roundedNum;
+    // let num = parseFloat(value);
+    // let roundedNum = parseFloat(num.toFixed(7));
+     const display = document.querySelector('.display');
+    // display.textContent = roundedNum;
+    display.textContent = value;
 }
 
 function removeActive(){
