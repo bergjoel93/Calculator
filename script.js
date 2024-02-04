@@ -2,15 +2,17 @@
 
 let firstNumber = 0;
 let operator = '';
+let previousOperator = '';
 let secondNumber = '';
-let solution = '';
-//let numButtonClicked = false; // keep track if a numButton has been clicked
+let solution = 0;
+
+
 let operatorButtonClicked = false; // keep track if an operatorButton has been clicked. 
-updateDisplay(firstNumber);
-// keep track of whether first number or second number is active and being displayed. 
 let firstNumberActive = true; // default state is true 
 let secondNumberActive = false;
 let equalsButtonClicked = false;
+
+updateDisplay(firstNumber);
 
 
 //////////////////Program Logic////////////////////////////
@@ -19,11 +21,9 @@ let equalsButtonClicked = false;
 let numBtns = document.querySelectorAll("button.num");
 numBtns.forEach(btn => {
     btn.addEventListener('click', ()=>{
-        //if(solution !='') firstNumber = 0;
-        if(equalsButtonClicked && !operatorButtonClicked){
+        //Situation: 1 + 2 = 3 => hit any number button => resets and firstNumber is btn.value
+        if(equalsButtonClicked){
             clear();
-            equalsButtonClicked == false;
-            console.log("equalsButtonClicked: "+equalsButtonClicked);
         }
 
         if(firstNumberActive){
@@ -38,8 +38,8 @@ numBtns.forEach(btn => {
                 console.log("firstNumber: "+firstNumber);
             }
         }
-
         if(secondNumberActive){
+            //equalsButtonClicked = false;
             if(secondNumber == 0 || secondNumber == ''){
                 secondNumber = btn.value;
                 updateDisplay(secondNumber);
@@ -51,72 +51,100 @@ numBtns.forEach(btn => {
                 console.log("secondNumber: "+secondNumber);
             }
         }
+        equalsButtonClicked = false;
     });
-});
-
-// clear button
-let clearBtn = document.querySelector("#clear");
-clearBtn.addEventListener('click', () =>{
-    clear();
-    equalsButtonClicked = false;
 });
 
 // operate button
 let operateButtons = document.querySelectorAll(".operator");
 operateButtons.forEach(btn => {
     btn.addEventListener('click', ()=>{
-        equalsButtonClicked = false;
-        if(!operatorButtonClicked){
-            operatorButtonClicked = true;
-            operator = btn.value;
-            btn.classList.add("active");
-            firstNumberActive = false;
-            secondNumberActive = true;
-        }
-        else if(operatorButtonClicked && secondNumber !=''){
-           firstNumber = operate(Number(firstNumber), operator, Number(secondNumber));
-           secondNumber = '';
-           console.log("firstNumber: "+firstNumber);
-           removeActive();
-           operator = btn.value;
-           btn.classList.add("active");
-           updateDisplay(firstNumber);
-           firstNumberActive = false;
-           secondNumberActive = true;
-        }
-        else if(operatorButtonClicked && secondNumber ==''){
-            firstNumber = operate(Number(firstNumber), operator, Number(firstNumber));
-           secondNumber = '';
-           console.log("firstNumber: "+firstNumber);
-           removeActive();
-           operator = btn.value;
-           btn.classList.add("active");
-           updateDisplay(firstNumber);
-           firstNumberActive = false;
-           secondNumberActive = true;
-        }
+        
+        operator = btn.value;
+        removeActive();
+        btn.classList.add("active");
         console.log("operator: "+ operator);
+
+        // default where equals button hasn't been clicked yet. 
+        if(!equalsButtonClicked){
+            if(firstNumberActive){
+                toggleFirstSecond();
+            }
+            else if(secondNumberActive) {
+                solution = operate(firstNumber, operator, secondNumber);
+                firstNumber = solution;
+                secondNumber = ''
+            }
+        }
+
+        // Situation: if 1 + 2 = 3 then user pressed operator again.
+        if(equalsButtonClicked) {
+            firstNumber = solution;
+            firstNumberActive = false;
+            secondNumber = 0;
+            secondNumberActive = true;
+            equalsButtonClicked = false;
+        }
+        // situation: if firstNumber is assigned and second number is not assigned and operator button is pushed again
+        if(operatorButtonClicked && secondNumber==''){
+            if(operator == previousOperator){
+                solution = operate(firstNumber,operator,firstNumber);
+                firstNumber = solution;
+            }
+            else {
+                solution = operate(firstNumber, previousOperator, secondNumber);
+                firstNumber = solution;
+
+            }
+            
+        }
+        //Situation: if firstNum is assigned and secondNum assigned and operator pressed again instead of equals. 
+        
+        else if(operatorButtonClicked){
+            solution = operate(firstNumber,operator,secondNumber);
+            firstNumber = solution;
+            secondNumber = '';
+            secondNumberActive = true;
+            firstNumberActive = false;
+        }
+        
+        previousOperator = operator;
+        equalsButtonClicked = false;
+        operatorButtonClicked = true;
     });
 });
 
 // equals button
 let equalsButton = document.querySelector("#equals");
 equalsButton.addEventListener('click', ()=> {
-    if(!equalsButtonClicked && (operator == '' || secondNumber =='')){
-        clear();
-        equalsButtonClicked = false;
+    console.log("equals button clicked")
+    equalsButtonClicked = true;
+    operatorButtonClicked = false; // falsify operator button clicked. 
+    removeActive();
+    if(secondNumber!=''){
+        solution = operate(firstNumber,operator,secondNumber);
+        secondNumber ='';
     }
-    else if(!equalsButtonClicked){
-        equalsButtonClicked=true;
-        console.log("equalsButtonClicked: "+equalsButtonClicked);
-        solution = operate(Number(firstNumber), operator, Number(secondNumber));
-        clear();
-        firstNumber = solution;
-        console.log("firstNumber: "+firstNumber)
-        updateDisplay(solution);
-    }
+    
+
+
+    // if(operator !='' && secondNumber != ''){
+    //     equalsButtonClicked=true;
+    //     console.log("equalsButtonClicked: "+equalsButtonClicked);
+    //     solution = operate(Number(firstNumber), operator, Number(secondNumber));
+    //     console.log("Solution:" + solution);
+    //     clear();
+    //     updateDisplay(solution);
+    // }
         
 });
+
+// clear button
+let clearBtn = document.querySelector("#clear");
+clearBtn.addEventListener('click', () =>{
+    clear();
+});
+
 
 let signButton = document.querySelector("#sign");
 signButton.addEventListener('click', ()=>{
@@ -169,6 +197,8 @@ decimalButton.addEventListener('click', () =>{
 
 //Create a new function operate that takes an operator and 2 numbers and then calls one of the above functions on the numbers.
 function operate(num1, op, num2){
+    num1 = Number(num1);
+    num2 = Number(num2);
     let solution = '';
     switch(op){
         case "add":
@@ -182,20 +212,15 @@ function operate(num1, op, num2){
             break;
         case "divide":
             if(num2 == 0){
-                soluition = "ERROR";
+                solution = "ERROR";
             }
             else{solution = num1 / num2;}
             break;
         default:
         updateDisplay('ERROR');
     }
+    updateDisplay(solution);
     return solution;
-    // updateDisplay(solution);
-    // operatorButtonClicked = false; //TODO possible bug might need to add conditional 
-    // operator = '';
-    // secondNumber = '';
-    // firstNumber = solution;
-    // console.log("First number updated: "+firstNumber);
 }
 
 //whatever you want to be displayed will be an argument of updateDisplay
@@ -220,9 +245,20 @@ function clear(){
     secondNumber = '';
     firstNumberActive = true;
     secondNumberActive = false;
-    //equalsButtonClicked = false;
+    equalsButtonClicked = false;
     operatorButtonClicked = false; 
     updateDisplay("0");
     removeActive();
     console.log("Calculator cleared!");
+}
+
+function toggleFirstSecond(){
+    if(firstNumberActive){
+        firstNumberActive = false;
+        secondNumberActive = true;
+    }
+    else{
+        secondNumberActive = false;
+        firstNumberActive = true;
+    }
 }

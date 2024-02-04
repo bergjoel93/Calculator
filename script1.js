@@ -150,7 +150,10 @@ function resetOperatorsClass(){
  * }
  * 
  * 
+ * if you do 3 + 3 = 6 and you press number directly after, then everything is cleared and firstNumber is input. 
+ * if you do 3 + 3 = 6 and then press operator, then solution becomes first number
  * 
+ * if you do 3 + 3  = 6 then press operator and press operator again 
  * 
  * 
  * 
